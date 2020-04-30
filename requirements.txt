@@ -1,0 +1,9 @@
+flask-restful
+flask
+flask-sqlalchemy
+marshmallow
+flask-jwt
+Flask-Bcrypt
+bcrypt
+flask-migrate
+sqlalchemy
