@@ -11,6 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
+    sessions = db.relationship('Session', backref='u_session', lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -63,3 +64,26 @@ class Like(db.Model):
             filter(cls.liked_at < date_to).one()[0]
 
         return likes
+
+
+class Session(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(100), nullable=False, unique=True)
+    login_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'token': self.token,
+            'user_id': self.user_id,
+            'login_time': str(self.login_time),
+        }
+
+    @classmethod
+    def get_last_login(cls, user_id: int) -> str:
+        last_login = db.session.query(func.max(cls.login_time).label('last_login')). \
+            filter(cls.user_id == user_id). \
+            first()[0]
+
+        return str(last_login)
