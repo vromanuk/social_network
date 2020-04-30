@@ -1,3 +1,7 @@
+import datetime
+
+from flask_jwt_extended import create_access_token
+
 from src import db
 from src.models import User
 
@@ -13,7 +17,10 @@ class AuthService:
 
     @classmethod
     def login(cls, user: User):
-        pass
+        expires = datetime.timedelta(days=7)
+        access_token = create_access_token(identity=str(user.id), expires_delta=expires)
+
+        return {'token': access_token}
 
     @classmethod
     def logout(cls):

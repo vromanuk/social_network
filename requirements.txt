@@ -7,3 +7,4 @@ Flask-Bcrypt
 bcrypt
 flask-migrate
 sqlalchemy
+flask-jwt-extended

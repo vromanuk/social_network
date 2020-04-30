@@ -30,13 +30,8 @@ class LoginResource(Resource):
             return err.messages, 422
         user = User.query.filter_by(email=json_data['email']).first()
         if user and bcrypt.check_password_hash(user.password, json_data['password']):
-            AuthService.login(user)
+            token = AuthService.login(user)
+        else:
+            return {'error': 'Email or password invalid'}, 401
 
-        return {"msg": f"Logged in as {json_data['email']}."}, 200
-
-
-class Logout(Resource):
-    def get(self):
-        AuthService.logout()
-
-        return {"msg": "You have been logged out."}, 200
+        return {"msg": f"Logged in as {json_data['email']}, {token['token']}."}, 200

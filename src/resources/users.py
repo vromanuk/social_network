@@ -1,4 +1,5 @@
 from flask import request
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from marshmallow import ValidationError
 
@@ -8,6 +9,7 @@ from src.schemas import PostSchema
 
 
 class UserResource(Resource):
+    @jwt_required
     def get(self, user_id: int = None, post_id: int = None):
         if not post_id:
             posts = Post.query.filter(user_id == Post.user_id).all()
@@ -21,6 +23,7 @@ class UserResource(Resource):
 
         return result, 200
 
+    @jwt_required
     def post(self, user_id: int = None):
         try:
             json_data = PostSchema().load(request.json)
